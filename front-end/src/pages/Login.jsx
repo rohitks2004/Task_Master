@@ -54,7 +54,7 @@ const Login = () => {
                 register={register("password", { required: "password required" })}
                 error={errors.password ? errors.password.message : " "}
               />
-              <span className="text-sm text-gray-500 hover:text-blue-600 hover:underline cursor pointer">Forgot password</span>
+              <span className="text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer">Forgot password</span>
               <Button type="submit" label="submit" className="w-full h-10 bg-blue-700 text-white rounded-full"/> 
               </div>
             </form>
