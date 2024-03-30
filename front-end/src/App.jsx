@@ -1,5 +1,5 @@
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-// import Toaster from "sonner";
+import {Toaster} from "sonner";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -9,7 +9,7 @@ import Trash from "./pages/Trash";
 import Users from "./pages/Users";
 
 function Layout() {
-  const user = "nan tha n da user";
+  const user = "";
 
   const location = useLocation();
   return user ? (
@@ -24,7 +24,7 @@ function Layout() {
       </div>
     </div>
   ) : (
-    <Navigate to={"log-in"} state={{ from: location }} replace />
+    <Navigate to={"/log-in"} state={{ from: location }} replace />
   );
 }
 
@@ -48,7 +48,7 @@ function App() {
           <Route path="/log-in" element={<Login />} />
         </Routes>
 
-        {/* <Toaster richColors /> */}
+        <Toaster richColors />
       </main>
     </>
   );
