@@ -1,5 +1,7 @@
 import User from "../Models/user.js";
 import { createJWT } from "../utils/index.js";
+import { response } from "express";
+import Notice from "../Models/notification.js";
 export const registerUser = async (req,res)=>{
     try {
         const {name,email,password,isAdmin,role,title}=req.body;
@@ -33,7 +35,7 @@ export const registerUser = async (req,res)=>{
         }
 
     } catch (error) {
-        return res.status(400),json({status:false,message:error.message});
+        return res.status(400).json({status:false,message:error.message});
 
     }
 }
@@ -66,12 +68,12 @@ export const loginUser = async (req,res)=>{
         }
 
     } catch (error) {
-        return res.status(400),json({status:false,message:error.message});
+        return res.status(400).json({status:false,message:error.message});
 
     }
 }
 
-export const logoutUserUser = async (req,res)=>{
+export const logoutUser = async (req,res)=>{
     try {
         res.cookie("token","",{
             httpOnly : true,
@@ -80,15 +82,171 @@ export const logoutUserUser = async (req,res)=>{
 
         res.status(200).json({message:"logout successfull"})
     } catch (error) {
+        return res.status(400).json({status:false,message:error.message});
+
+    }
+}
+
+export const getTeamList = async (req,res)=>{
+    try {
+        const users= await User.find().select( "name title role email isActive");
+    
+        res.status(200).json(users)
+    } catch (error) {
+        return res.status(400).json({status:false,message:error.message});
+
+    }
+}
+
+export const getNotificationsList = async (req,res)=>{
+    try {
+        const { userId } = req.user;
+    
+        const notice = await Notice.findOne({
+            team: userId,
+            isRead: { $nin: [userId] },
+        }).populate("task", "title");
+    
+        res.status(201).json(notice);
+    }
+    catch (error) {
         return res.status(400),json({status:false,message:error.message});
 
     }
 }
-// export const logoutUserUser = async (req,res)=>{
-//     try {
-        
-//     } catch (error) {
-//         return res.status(400),json({status:false,message:error.message});
+export const updateUserProfile = async (req,res)=>{
+    try {       
+            const { userld, isAdmin}=req.user;
+            const { _id } = req.body;
 
-//     }
-// }
+            const id =
+            isAdmin && userld === _id
+            ? userld
+            : isAdmin && userld !== _id
+            ? _id
+            : userld;
+            const user = await User.findById(id);
+          
+            if (user){
+            user.name= req.body.name || user.name;
+            
+            user.title= req.body.title || user.title;
+            
+            user.role= req.body.role || user. role;
+         
+            const updateUser = await User.Save()
+                user.password=undefined;
+                res.status(201).json({
+                    status:true,
+                    message:"Profile Updated Successfully",
+                    user:updateUser
+                })
+        }
+        else
+        {
+            res.status(400).json({status:false,message:"User not found"});
+        }
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+export const markNotificationRead = async (req,res)=>{
+    try {
+        const {userId}=req.user;
+        
+        const {isReadType,id}=req.query;
+
+        if(isReadType=="all"){
+            await Notice.updateMany(
+                {team:userId,isRead:{$nin:[userId]}},
+                {$push:{isRead:userId}},
+                {new:true}
+            );
+        }
+        else{
+            await Notice.findOneAndUpdate(
+                {_id:id,isRead:{$nin:[userId]}},
+                {$push:{isRead:userId}},
+                {new:true}
+            )
+        }
+        res.status(201).json({status:true,message:"Done"});
+    } 
+    catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+export const changeUserPassword = async (req,res)=>{
+    try {
+        const {userId}=req.user;
+
+        const user= await User.findById(userId);
+        
+        if(user){
+            user.password=req.body.password;
+            await user.save();
+
+            user.password = undefined;
+
+            res.status(201).json({
+                status:true,
+                message:"Password changed Successfully",
+            })
+        }
+        else{
+            res.status(404).json({status:false,message:"User not found"});
+        }
+
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+export const activateUserProfile = async (req,res)=>{
+    try {
+        const { id}=req.params;
+        const user = await User.findById(id);
+
+        if(user){
+            user.isActive=req.body.isActive;
+          
+            await user.save();
+          
+            user.password=undefined;
+    
+            res.status(201).json({
+                status:true,
+                message:`User account has been ${
+                    ser?.isActive ? "activated":"disabled"}`
+    
+            })
+    
+        }
+        else{
+            res.status(404).json({status:false,message:"User not found"});
+        }
+        
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+export const deleteUserProfile = async (req,res)=>{
+    try {
+        const {id}=req.params;
+
+        await User.findByIdAndDelete(id);
+        res.status(200).json({
+            status:true,
+            message:"User deleted successfully"
+        })
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
