@@ -3,6 +3,7 @@ import { MdMenu, MdOutdoorGrill, MdOutlineMenu, MdOutlineSearch } from "react-ic
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenSidebar } from "../redux/slices/authSlice";
 import UserAvater from "./UserAvater";
+import NotificationPanel from "./NotificationPanel";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -27,7 +28,7 @@ const Navbar = () => {
         </div>
       </div>
       <div className="flex gap-2 items-center">
-        {/* <NotificationPanel/> */}
+        <NotificationPanel/>
          <UserAvater/>
 
       </div>
