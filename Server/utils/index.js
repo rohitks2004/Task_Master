@@ -13,8 +13,8 @@ const dbConnection =async ()=>{
 
 export default dbConnection;
 
-export const createJWT = (RES,USERiD)=>{
-const token = jwt.sign({USERiD},process.env.JWT_SECRET,{expiresIn:'1d',
+export const createJWT = (res,userId)=>{
+const token = jwt.sign({userId},process.env.JWT_SECRET,{expiresIn:'1d',
 
 });
 
@@ -25,5 +25,4 @@ res.cookie("token",token,{
     maxAge:1*24*60*60*1000,//! day
 
 })
-
 }
