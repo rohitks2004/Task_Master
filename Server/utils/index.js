@@ -1,10 +1,12 @@
+// import dotenv from 'dotenv';
+// dotenv.config();
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 const url="mongodb+srv://sakthi:Vicky07@cluster0.ggmamcl.mongodb.net/taskDB?retryWrites=true&w=majority";
 
 const dbConnection =async ()=>{
     try {
-        await mongoose.connect(url);
+        await mongoose.connect(process.env.MONGODB_URI);
         console.log("DB connected");
     } catch (error) {
         console.log("DB error"+ error);
