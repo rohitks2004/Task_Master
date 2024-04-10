@@ -155,6 +155,7 @@ const groupData = Object.entries(
 
     },{})
     .map(([name,total])=>({name,total})));
+     
     //calculate tasks
     const totalTasks = allTasks ?.length;
     const last10Task=allTasks?.slice(0,10);
@@ -175,6 +176,169 @@ const summary ={
     }
 }
 
+export const getTasks = async (req,res)=>{
+    try {
+        const {stage,isTrashed}=req.query;
+
+
+        let query={isTrashed:isTrhased ? true :false};
+
+        if(stage){
+            query.stage=stage;
+        }
+
+        let queryResult=Task.find(query).populate({
+            path:"team",
+            select:"name title email",
+
+        })
+        .sort({_id:-1});
+
+
+        const tasks=await queryResult;
+
+        res.status(200).json({
+            status:true,
+            tasks,
+        
+        })
+            
+
+        } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+export const getTask  = async (req,res)=>{
+    try {
+       const {id} =req.params;
+       const task =await Task.findById(id).populate({
+        path:"team",
+        select:"name title role email",
+       }).populate({
+        path:"activity.by",select:"name",
+       }).sort({_id:-1});
+
+       res.status(200).json({
+        status:true,
+        tasks,
+    
+    })
+
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+export const createSubTask = async (req,res)=>{
+    try {
+        const {title,tag,date}=req.body;
+        const {id}=req.params;
+
+        const newSubTask={
+            title,date,tag,
+        };
+        const task = await Task.findById(id);
+
+        task.subTasks.push(newSubTask);
+
+        await task.save();
+        res.status(200).json({
+            status:true,
+            tasks,
+        
+        })
+        
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+
+export const updateTask = async (req,res)=>{
+    try {
+        const {id}=req.params;
+        const {title,date,team,stage,priority,assets}=req.body;
+        const task= await Task.findById(id);
+
+        task.title=title;
+        task.date=date;
+        task.priority=priority.toLowerCase();
+        task.assets=assets
+        task.stage=stage.toLowerCase()
+        task.team=team;
+
+        await task.save();
+
+ res.status(200).json({
+        status:true,
+     message:"Task duplicated successfully."
+    })
+        
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+
+export const trashTask  = async (req,res)=>{
+    try {
+
+        const{id}=req.params;
+        const task=await Task.findById(id);
+        task.isTrashed = true;
+         
+        await task.save();
+        res.status(200).json({
+            status:true,
+            message:"Task trashed successfully."
+        ,
+        })
+        
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
+export const deleteRestoreTask = async (req,res)=>{
+    try {
+        const{id}=req.params
+        const {actionType}=req.query;
+
+        if(actionType=="delete"){
+            await Task.findByIdAndDelete(id);
+        }
+        else if(actionType=="deleteAll")
+        {
+            await Task.deleteMany({isTrashed:true});
+
+        }
+        else if(actionType=="restore")
+        {
+const resp = await Task.findById(id);
+
+ersp.isTrashed=false;
+resp.save();
+
+        }
+        else if(actionType=="restoreALL")
+        {
+            await Task.updateMany({isTrashed:true},{$set:{isTrashed:false}});
+            
+
+
+        }
+    } catch (error) {
+        return res.status(400),json({status:false,message:error.message});
+
+    }
+}
+
 // export const  = async (req,res)=>{
 //     try {
         
@@ -183,16 +347,6 @@ const summary ={
 
 //     }
 // }
-
-// export const  = async (req,res)=>{
-//     try {
-        
-//     } catch (error) {
-//         return res.status(400),json({status:false,message:error.message});
-
-//     }
-// }
-
 // export const  = async (req,res)=>{
 //     try {
         
