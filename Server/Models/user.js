@@ -9,7 +9,7 @@ const userSchema = new Schema({
     role:{type:String,required:true},
     isAdmin:{type:Boolean,required:true,default:false},
     tasks:[{type:Schema.Types.ObjectId,ref:"Task"}],
-    isActive:{type:Boolean,rrequired:true,default:false}
+    isActive:{type:Boolean,required:true,default:false}
    
 },
 {timestamps:true}
@@ -24,7 +24,7 @@ userSchema.pre("save",async function ( next){
 
 })
 
-userSchema.method.matchPassword = async function (enteredPassword){
+userSchema.methods.matchPassword = async function (enteredPassword){
     return await bcrypt.compare(enteredPassword,this.password);
 };
 
