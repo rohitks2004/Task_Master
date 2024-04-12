@@ -1,33 +1,40 @@
+import Notice from "../Models/notification.js";
 import Task from "../Models/task.js";
 import User from "../Models/user.js";
 
 export const createTask = async (req,res)=>{
     try {
+        const {userId}=req.params;
         const {title,team,stage,date,priority,assets}=req.body;
-        const task=await Task.create({
+       let text="New task has been assigned to you"    
+        if(team.length >1)
+    {
+        text =text+`and ${team?.length - 1} others`;
+    }
+text=text+`The Task priority is set a ${priority} priority,so check and act accordingly. The task date is ${new Date(date).toDateString()}.Thank you !!!`;
+
+  
+
+    const activity={
+        type:"assigned",
+        activity:text,
+        by:userId
+    }
+      const task=await Task.create({
             title,team,stage :stage.toLowerCase(),date,
             priority :priority.toLowerCase(),
             assets
         })
 
-        let text = "New task has been assigned to you";    
-    
-        if(task.team.length >1)
-    {
-        text =text+`and ${task.team.length - 1} others`;
-    }
-text+=text+`The Task priority is set a ${task.priority} priority,so check and act accordingly. The task date is ${task.date.toDateString()}.Thank you !!!`;
-
-    await Notice.create({
-        team,team,task:task._id,
-    });
-
+        await Notice.create({
+            team,team,task:task._id,
+        });
     res.status(200)
     .json({status:true,message:"Task created successfully."});
 
 
     } catch (error) {
-        return res.status(400),json({status:false,message:error.message});
+        return res.status(400).json({status:false,message:error.message});
 
     }
    
@@ -181,7 +188,7 @@ export const getTasks = async (req,res)=>{
         const {stage,isTrashed}=req.query;
 
 
-        let query={isTrashed:isTrhased ? true :false};
+        let query={isTrashed:isTrashed ? true :false};
 
         if(stage){
             query.stage=stage;
@@ -205,7 +212,7 @@ export const getTasks = async (req,res)=>{
             
 
         } catch (error) {
-        return res.status(400),json({status:false,message:error.message});
+        return res.status(400).json({status:false,message:error.message});
 
     }
 }
@@ -322,7 +329,7 @@ export const deleteRestoreTask = async (req,res)=>{
         {
 const resp = await Task.findById(id);
 
-ersp.isTrashed=false;
+resp.isTrashed=false;
 resp.save();
 
         }
