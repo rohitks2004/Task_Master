@@ -1,0 +1,124 @@
+import clsx from "clsx";
+import React, { useState } from "react";
+import {
+  MdAttachFile,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+  MdKeyboardDoubleArrowUp,
+} from "react-icons/md";
+import { BiMessageAltDetail } from "react-icons/bi";
+import { useSelector } from "react-redux";
+import { BGS, PRIORITYSTYLES, TASK_TYPE, formatDate } from "../utils";
+import TaskDialog from "./task/TaskDialog";
+import { FaList } from "react-icons/fa";
+import UserInfo from "./UserInfo";
+import { IoMdAdd } from "react-icons/io";
+
+const ICONS = {
+  high: <MdKeyboardDoubleArrowUp />,
+  medium: <MdKeyboardArrowUp />,
+  low: <MdKeyboardArrowDown />,
+};
+const TaskCard = ({ task }) => {
+  const { user } = useSelector((state) => state.auth);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <div className=" w-full h-fit shadow-md bg-white p-4 rounded">
+        <div className="w-full justify-between">
+          <div
+            className={clsx(
+              "flex flex-1 gap-1 items-center text-sm font-medium",
+              PRIORITYSTYLES[task?.priority]
+            )}
+          >
+            <span className="text-lg">{ICONS[task?.priority]}</span>
+            <span className="uppercase">{task?.priority + "Priority"}</span>
+          </div>
+          {user?.isAdmin && <TaskDialog task={task} />}
+        </div>
+
+        <>
+          <div className="flex item-center gap-2">
+            <div
+              className={clsx("w-4 h-4 rounded-full", TASK_TYPE[task.stage])}
+            />
+            <h4 className="text-line-clamp-1 text-black">{task?.title}</h4>
+          </div>
+          <span className="text-sm text-gray-600">
+            {formatDate(new Date(task?.date))}
+          </span>
+        </>
+
+        <div className="w-full border-t border-gray-200  my-2" />
+        <div className="flex item-center justify-between mb-2">
+          <div className="flex item-center gap-2">
+            <div className="flex item-center gap-1 text-sm text-gray-600">
+              <BiMessageAltDetail />
+              <span>{task?.activities?.length}</span>
+            </div>
+            <div className="flex item-center gap-1 text-sm text-gray-600">
+              <MdAttachFile />
+              <span>{task?.assets?.length}</span>
+            </div>
+            <div className="flex item-center gap-1 text-sm text-gray-600">
+              <FaList />
+              <span>0/{task?.subTasks?.length}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-row-reverse ">
+            {task?.team?.map((m, index) => (
+              <div
+                key={index}
+                className={clsx(
+                  "w-7 h-7 rounded-full flex justify-center items-center text-sm -mr-1 text-white",
+                  BGS[index % BGS?.length]
+                )}
+              >
+                <UserInfo user={m} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* subtasks */}
+        {task?.subTasks?.length > 0 ? (
+          <div className="py-4 borber-t border-gray-200">
+            <h5 className="text-base text-black line-clamp-1">
+              {task?.subTasks[0]?.title}
+            </h5>
+            <div className="p-4 space-x-8">
+              <span className="text-sm text-gray-600">
+                {formatDate(new Date(task?.subTasks[0]?.date))}
+              </span>
+              <span className="bg-blue-600/10 font-medium text-blue-700 py-1 px-3 rounded-full">
+                {task?.subTasks[0]?.tag}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="py-4 borber-t border-gray-200">
+            <span className="text-gray-500">NO Sub Tasks</span>
+          </div>
+        )}
+
+        <div className="w-full pb-2">
+          <button
+            disabled={user.isAdmin ? false : true}
+            className="w-full flex gap-4 item-center text-sm text-gray-500 font-semibold 
+            disabled:cursor-not-allowed disabled::text-gray-300"
+          >
+            <IoMdAdd className="text-lg" />
+            <span>ADD SUB TASKS</span>
+          </button>
+        </div>
+      </div>
+
+      {/* <AddSubTask open={open} setOpen={setOpen} id={task.id}/> */}
+    </>
+  );
+};
+
+export default TaskCard;

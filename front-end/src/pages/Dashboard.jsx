@@ -8,12 +8,11 @@ import {
 import { LuClipboardEdit } from "react-icons/lu";
 import { FaNewspaper, FaUserClock, FaUsers } from "react-icons/fa";
 import { FaArrowsToDot } from "react-icons/fa6";
-// import moment from "moment";
+import moment from "moment";
 import { summary } from "../assets/data";
 import clsx from "clsx";
 import Chart from "../components/Chart.jsx";
-import { BGS, PRIOTITYSTYELS, TASK_TYPE } from "../utils/index.js";
-// import { BGS, PRIOTITYSTYELS, TASK_TYPE, getInitials } from "../utils";
+import { BGS, PRIORITYSTYLES, TASK_TYPE, getInitials } from "../utils/index.js";
 import UserInfo from "../components/UserInfo";
 
 
@@ -46,7 +45,7 @@ const TaskTable = ({tasks}) =>{
       </td>
       <td className="py-2">
         <div className="flex items-center gap-1">
-          <span className={clsx("text-lg",PRIOTITYSTYELS[task.priority])}>{ICONS[task.priority]}</span>
+          <span className={clsx("text-lg",PRIORITYSTYLES[task.priority])}>{ICONS[task.priority]}</span>
           <span>{task.priority}</span>
         </div>
       </td>
@@ -64,11 +63,16 @@ const TaskTable = ({tasks}) =>{
           }
         </div>
       </td>
+      <td className="py-2 hidden md:block">
+        <span className="text-base text-gray-600">
+          {moment(task?.date).fromNow()}
+        </span>
+      </td>
           </tr>)
   }
 
   return(<>
-    <div className="w-full md:w-2/3 px-2 md:px-4 pt-4 pb-4 shadow-md-rounded bg-white">
+    <div className="w-full md:w-2/3 px-2 md:px-4 pt-4 pb-4 shadow-md rounded bg-white">
        <table className="w-full">
         <TableHeader/>
         <tbody>
@@ -87,7 +91,63 @@ const TaskTable = ({tasks}) =>{
   </>)
 }
 
+const UserTable = ({users}) =>{
+  const TableHeader =()=>(
+  <thead className="border-b border-gray-300">
+      <tr className="text-black text-left">
+        <th className="py2">Full Name</th>
+        <th className="py2">Status</th>
+        <th className="py2">Created At</th>
+      </tr>
+    </thead>
+  );
 
+  const TableRow =({user})=>{
+    return(<tr className="border-b border-gray-200 text-gray-600 hover:bg-gray-400/10">
+      <td className="py-2">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full text-white bg-violet-700 flex items-center justify-center">
+            <span className="text-center ">{getInitials(user?.name)}</span>
+          </div>
+          <div>
+            <p>{user?.name}</p>
+            <span className="text-sm text-black">{user?.role}</span>
+          </div>
+        </div>
+
+      </td>
+      <td className="py-2">
+        <p 
+           className={clsx("w-fit px-3 py-1 rounded-full text-sm"
+                  ,user?.isActive? "bg-blue-200":"bg-yellow-100")}
+        >
+          {user?.isActive? "Active":"Disabled"}
+        </p>
+      </td>
+      <td className="py-2 text-sm">
+        {moment(user?.createdAt).fromNow()}      
+      </td> 
+     </tr>)
+  }
+
+  return(
+    <div className="w-full md:w-2/3 h-fit px-2 md:px-6 py-4 shadow-md rounded bg-white">
+    <table className="w-full mb-5">
+     <TableHeader/>
+     <tbody>
+       {
+         users?.map((user,index)=>(
+           <TableRow 
+           key={index + user?._id}
+           user= {user}
+           />
+         ))
+       }
+     </tbody>
+    </table>
+ </div>
+  )
+}
 
 
 const Dashboard = () => {
@@ -163,10 +223,9 @@ const Dashboard = () => {
       </div>
       <div className="w-full flex flex-col md:flex-row gap-4 2xl:gap-10 py-8">
         {/* left */}
-        <div className="">
           <TaskTable tasks={summary.last10Task}/>
-        </div>
         {/* right */}
+        <UserTable users={summary.users} />
       </div>
     </div>
   )
