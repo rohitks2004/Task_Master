@@ -12,7 +12,7 @@ import moment from "moment";
 import { summary } from "../assets/data";
 import clsx from "clsx";
 import Chart from "../components/Chart.jsx";
-import { BGS, PRIOTITYSTYLES, TASK_TYPE, getInitials } from "../utils/index.js";
+import { BGS, PRIORITYSTYLES, TASK_TYPE, getInitials } from "../utils/index.js";
 import UserInfo from "../components/UserInfo";
 
 
@@ -45,7 +45,7 @@ const TaskTable = ({tasks}) =>{
       </td>
       <td className="py-2">
         <div className="flex items-center gap-1">
-          <span className={clsx("text-lg",PRIOTITYSTYLES[task.priority])}>{ICONS[task.priority]}</span>
+          <span className={clsx("text-lg",PRIORITYSTYLES[task.priority])}>{ICONS[task.priority]}</span>
           <span>{task.priority}</span>
         </div>
       </td>

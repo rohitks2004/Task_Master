@@ -8,7 +8,7 @@ import {
 } from "react-icons/md";
 import { BiMessageAltDetail } from "react-icons/bi";
 import { useSelector } from "react-redux";
-import { BGS, PRIOTITYSTYLES, TASK_TYPE, formatDate } from "../utils";
+import { BGS, PRIORITYSTYLES, TASK_TYPE, formatDate } from "../utils";
 import TaskDialog from "./task/TaskDialog";
 import { FaList } from "react-icons/fa";
 import UserInfo from "./UserInfo";
@@ -30,7 +30,7 @@ const TaskCard = ({ task }) => {
           <div
             className={clsx(
               "flex flex-1 gap-1 items-center text-sm font-medium",
-              PRIOTITYSTYLES[task?.priority]
+              PRIORITYSTYLES[task?.priority]
             )}
           >
             <span className="text-lg">{ICONS[task?.priority]}</span>

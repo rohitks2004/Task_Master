@@ -13,7 +13,7 @@ const Tabs = ({ tabs, setSelected, children }) => {
           {tabs.map((tab, index) => (
             <Tab
               key={index + tab.title}
-              onClick={() => setSelected(tab.title)}
+              onClick={() => setSelected(index)}
               className={({ selected }) =>
               classNames(
                 
@@ -29,7 +29,7 @@ const Tabs = ({ tabs, setSelected, children }) => {
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panel className="w-full mt-2">{children}</Tab.Panel>
+        <Tab.Panels className="w-full mt-2">{children}</Tab.Panels>
       </Tab.Group>
     </div>
   );
