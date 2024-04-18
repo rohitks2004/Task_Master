@@ -4,7 +4,6 @@ import React from "react";
 const Button = ({ icon ,type, label, className,onClick=()=>{} }) => {
   return (
     <button
-    onClick={onClick}
       type={type || "button"}
       className={clsx("px-3 py-2 outline-none", className)}
     >

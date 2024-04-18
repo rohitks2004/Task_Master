@@ -2,40 +2,75 @@ import User from "../Models/user.js";
 import { createJWT } from "../utils/index.js";
 import { response } from "express";
 import Notice from "../Models/notification.js";
-export const registerUser = async (req,res)=>{
-    try {
-        const {name,email,password,isAdmin,role,title}=req.body;
+// export const registerUser = async (req,res)=>{
+//     try {
+//         const {name,email,password,isAdmin,role,title}=req.body;
+//         const userExist = await User.findOne({email});
+//         if(userExist){
+//             return res.status(400).json({
+//                 status:false
+//                 ,message:"User Already Exists"
+//             });
+//         }
+//         const user = await User.create({
+//            name,
+//            email,
+//            password,
+//            isAdmin,
+//            role,
+//            title,
+//         })
 
-        const userExist = await User.findOne({email});
-        if(userExist){
+//         if(user){
+//             isAdmin ? createJWT(res,user._id):null;
+
+//             user.password = undefined;
+//             res.status(201).json(user);
+
+//         }else{
+//             return res
+//             .status(400)
+//             .json({status:false,message:"Invalid user data"})
+//         }
+
+//     } catch (error) {
+//         return res.status(400).json({status:false,message:error.message});
+
+//     }
+// }
+export const registerUser = async (req, res) => {
+    try {
+        const { name, email, password, isAdmin, role, title } = req.body;
+        const userExist = await User.findOne({ email });
+        if (userExist) {
             return res.status(400).json({
-                status:false
-                ,message:"User Already Exists"
+                status: false,
+                message: "User Already Exists"
             });
         }
         const user = await User.create({
-           name,
-           email,
-           password,
-           isAdmin,
-           role,
-           title,
+            name,
+            email,
+            password,
+            isAdmin,
+            role,
+            title,
         })
 
-        if(user){
-            isAdmin ? createJWT(res,user._id):null;
+        if (user) {
+            isAdmin ? createJWT(res, user._id) : null;
 
             user.password = undefined;
             res.status(201).json(user);
 
-        }else{
+        } else {
             return res
-            .status(400)
-            .json({status:false,message:"Invalid user data"})
+                .status(400)
+                .json({ status: false, message: "Invalid user data" })
         }
 
     } catch (error) {
-        return res.status(400).json({status:false,message:error.message});
+        return res.status(400).json({ status: false, message: error.message });
 
     }
 }
@@ -61,7 +96,7 @@ export const loginUser = async (req,res)=>{
 
             user.password =undefined;
 
-            res.status(200).json(user)
+            res.status(200).json({message:"Login successful"})
         }
         else{
             return res.status(401).json({status:false , message:"Invalid email or password"});
