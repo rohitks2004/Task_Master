@@ -38,7 +38,7 @@ import Notice from "../Models/notification.js";
 
 //     }
 // }
-export const registerUser = async (req, res) => {
+export const    registerUser = async (req, res) => {
     try {
         const { name, email, password, isAdmin, role, title } = req.body;
         const userExist = await User.findOne({ email });
@@ -96,7 +96,7 @@ export const loginUser = async (req,res)=>{
 
             user.password =undefined;
 
-            res.status(200).json({message:"Login successful"})
+            res.status(200).json({user})
         }
         else{
             return res.status(401).json({status:false , message:"Invalid email or password"});
