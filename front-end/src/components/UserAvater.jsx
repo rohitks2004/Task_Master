@@ -6,16 +6,27 @@ import {IoLogOutOutline} from "react-icons/io5"
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getInitials } from '../utils';
+import { toast } from 'sonner';
+import { useLogoutMutation } from '../redux/slices/api/authApiSlice';
+import { logout } from '../redux/slices/authSlice';
 
 const UserAvater = () => {
     const [open,setOpen] =useState(false);
     const [openpassword,setOpenpassword] = useState(false);
     const {user} = useSelector((state)=>state.auth);
-    // const [LogoutUser] = useLogoutMutation();
+
     const dispatch = useDispatch();
     const Navigate = useNavigate();
+const [logoutUser]=useLogoutMutation();
 
-    const logoutHandler = ()=>{
+    const logoutHandler =async  ()=>{
+      try {
+          await logoutUser().unwrap();
+          //dispatch(logout())
+          Navigate("/log-in");
+      } catch (error) {
+        toast.error("Something went wrong")
+      }
         console.log("logout")
     }
 

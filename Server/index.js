@@ -1,6 +1,5 @@
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-
 import express  from "express";
 import morgan from "morgan";
 import dbConnection from './utils/index.js'
@@ -16,7 +15,7 @@ const PORT= process.env.PORT || 5000;
 const app=express();
 
 app.use(cors({
-    origin:['http://localhost:3000',"http..localhost:3001"],
+    origin:['http://localhost:5173',"http..localhost:3001"],
     methods:["GET","POST","PUT","DELETE"],
     credentials:true,
 
