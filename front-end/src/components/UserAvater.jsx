@@ -22,7 +22,7 @@ const [logoutUser]=useLogoutMutation();
     const logoutHandler =async  ()=>{
       try {
           await logoutUser().unwrap();
-          //dispatch(logout())
+          dispatch(logout())
           Navigate("/log-in");
       } catch (error) {
         toast.error("Something went wrong")
