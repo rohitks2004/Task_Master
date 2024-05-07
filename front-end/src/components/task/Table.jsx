@@ -13,6 +13,7 @@ import { BGS, PRIORITYSTYLES, TASK_TYPE, formatDate } from "../../utils";
 import { FaList } from "react-icons/fa";
 import UserInfo from "../UserInfo";
 import Button from "../Button";
+import ConfirmationDialog from "../Dialog";
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
@@ -24,7 +25,13 @@ const Table = ({ tasks }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  const deleteClicks = () => {}
+  const deleteClicks = (id) => {
+    setSelected(id);
+    setOpenDialog(true);
+
+  }
+
+  const deleteHandler = () => {}
 
   const TableHeader = () => (
     <thead className="w-full border-b border-gray-300">
@@ -132,11 +139,11 @@ const Table = ({ tasks }) => {
       </div>
 
 {/* TODO */}
-      {/* <ConfirmationDialog 
+      <ConfirmationDialog 
        open = {openDialog}
        setOpen = {setOpenDialog}
        onClick = {deleteHandler}
-       /> */}
+       />
     </>
   );
 };
