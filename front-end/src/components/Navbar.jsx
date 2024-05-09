@@ -18,14 +18,14 @@ const Navbar = () => {
             <MdMenu  className="text-gray-500 text-xl"/>
         </button>
         {/* inga kodu varuthu */}
-        <div className="w-64 2xl:w-[400px] flex items-center py-2 px-3 gap-2 rounded-full bg-[#f3f4f6]">
+        {/* <div className="w-64 2xl:w-[400px] flex items-center py-2 px-3 gap-2 rounded-full bg-[#f3f4f6]">
           <MdOutlineSearch className="text-gray-500 text-xl" />
           <input
             type="text"
             placeholder="search..."
             className="flex-1 outline-none bg-transparent placeholder:tetx-gray-500 tex-gray-800"
           />
-        </div>
+        </div> */}
       </div>
       <div className="flex gap-2 items-center">
         <NotificationPanel/>

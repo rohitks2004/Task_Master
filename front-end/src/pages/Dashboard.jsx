@@ -230,7 +230,7 @@ const Dashboard = () => {
         <h4 className="text-gray-600 text-xl font-semibold">
           Chart by Priority
         </h4>
-        <Chart data={data?.groupData} />
+        <Chart data={data?.graphData} />
       </div>
       <div className="w-full flex flex-col md:flex-row gap-4 2xl:gap-10 py-8">
         {/* left */}

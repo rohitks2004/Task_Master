@@ -7,9 +7,10 @@ router.post("/create",protectRoute,isAdminRoute,createTask);
 router.post("/duplicate/:id",protectRoute,isAdminRoute,duplicateTask);
 router.post("/activity/:id",protectRoute,isAdminRoute,postTaskActivity);
 
-router.get("/:id",protectRoute, getTask);
+
 router.get("/dashboard" ,protectRoute, dashboardStatistics);
-router.get( "/fetch",protectRoute, getTasks);
+router.get("/fetch",protectRoute, getTasks);
+router.get("/:id",protectRoute, getTask);
 
 
 router.put("/create-subtask/:id",protectRoute,isAdminRoute,createSubTask);
