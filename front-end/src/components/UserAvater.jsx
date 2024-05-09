@@ -9,6 +9,8 @@ import { getInitials } from '../utils';
 import { toast } from 'sonner';
 import { useLogoutMutation } from '../redux/slices/api/authApiSlice';
 import { logout } from '../redux/slices/authSlice';
+import { ChangePassword } from './ChangePassword';
+import AddUser from './AddUser';
 
 const UserAvater = () => {
     const [open,setOpen] =useState(false);
@@ -96,6 +98,9 @@ const [logoutUser]=useLogoutMutation();
             </Transition>
           </Menu>
         </div>
+<AddUser open={open} setOpen={setOpen} userData={user}/>
+<ChangePassword open={openpassword} setOpen={setOpenpassword}/>
+
       </>
     );
 }

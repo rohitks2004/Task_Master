@@ -19,6 +19,7 @@ import Tabs from "../components/Tabs";
 import { PRIORITYSTYLES, TASK_TYPE, getInitials } from "../utils/index";
 import Loading from "../components/Loader";
 import Button from "../components/Button";
+import { useGetSingleTaskQuery } from "../redux/slices/api/taskApiSlice";
 
 const assets = [
   "https://images.pexels.com/photos/2418664/pexels-photo-2418664.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -88,10 +89,19 @@ const act_types = [
 
 const TaskDetails = () => {
   const { id } = useParams();
-
+  console.log(id);
+const {data,isLoading}=useGetSingleTaskQuery(id);
   const [selected, setSelected] = useState(0);
-  const task = tasks[3];
-
+  const task = data?.task;
+  console.log(task);
+if(isLoading)
+  {
+    return(
+      <div className="py-10">
+        <Loading/>
+      </div>
+    )
+  }
   return (
     <div className='w-full flex flex-col gap-3 mb-4 overflow-y-hidden'>
       <h1 className='text-2xl text-gray-600 font-bold'>{task?.title}</h1>

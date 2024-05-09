@@ -12,6 +12,7 @@ import BoardView from "../components/BoardView";
 import { tasks } from "../assets/data";
 import Table from "../components/task/Table";
 import AddTask from "../components/task/AddTask";
+import { useGetAllTaskQuery } from "../redux/slices/api/taskApiSlice";
 
 const TABS = [
   { title: "board View", icon: <MdGridView /> },
@@ -28,14 +29,17 @@ const Task = () => {
   const params = useParams();
   const [selected, setSelected] = useState(1);
   const [open, setOpen] = useState(false);
-  const [loading, setloading] = useState(false);
 
   const status = params?.status || "";
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const { data, isLoading } = useGetAllTaskQuery({
+    strQuery: status, isTrashed: "", search: ""
+  })
 
-  return loading ? (
+  // const handleOpen = () => setOpen(true);
+  // const handleClose = () => setOpen(false);
+
+  return isLoading ? (
     <div className="py-10">
       <Loading />
     </div>
@@ -45,7 +49,7 @@ const Task = () => {
         <Title title={status ? `${status} Tasks` : "Tasks"} />
         {!status && (
           <Button
-          onClick={()=>setOpen(true)}
+            onClick={() => setOpen(true)}
             label="Create Task"
             icon={<IoMdAdd className="text-lg" />}
             className={
@@ -54,29 +58,29 @@ const Task = () => {
           />
         )}
       </div>
-        <Tabs tabs={TABS} setSelected={setSelected}>
-          {!status && (
-            <div className="w-full flex justify-between gap-4 md:gap-x-12 py-4">
-              <TaskTitle label="To Do" className={TASK_TYPE.todo} />
-              <TaskTitle
-                label="In Progress"
-                className={TASK_TYPE["in progress"]}
-              />
-              <TaskTitle label="Completed" className={TASK_TYPE.completed} />
-            </div>
-          )}
+      <Tabs tabs={TABS} setSelected={setSelected}>
+        {!status && (
+          <div className="w-full flex justify-between gap-4 md:gap-x-12 py-4">
+            <TaskTitle label="To Do" className={TASK_TYPE.todo} />
+            <TaskTitle
+              label="In Progress"
+              className={TASK_TYPE["in progress"]}
+            />
+            <TaskTitle label="Completed" className={TASK_TYPE.completed} />
+          </div>
+        )}
 
-          {selected === 0 ? (
-              <BoardView tasks={tasks} />
-          ) : (
-            <div className="w-full">
-              <Table tasks={tasks} />
-            </div>
-          )}
-        </Tabs>
+        {selected !== 1 ? (
+          <BoardView tasks={data?.tasks} />
+        ) : (
+          <div className="w-full">
+            <Table tasks={data?.tasks} />
+          </div>
+        )}
+      </Tabs>
 
-        <AddTask open={open} setOpen={setOpen} />
-      </div>
+      <AddTask open={open} setOpen={setOpen} />
+    </div>
   );
 };
 

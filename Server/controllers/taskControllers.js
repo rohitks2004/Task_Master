@@ -152,21 +152,35 @@ export const dashboardStatistics = async (req,res)=>{
             return result
         },{});
         
-//Group tasks by priority
-const groupData = Object.entries(
-    allTasks.reduce((result,task)=>{
-        const {priority}=task;
+// //Group tasks by priority
+// const groupData = Object.entries(
+//     allTasks.reduce((result,task)=>{
+//         const {priority}=task;
 
-        result[priority]=(result[priority] || 0)+1;
-        return result;
+//         result[priority]=(result[priority] || 0)+1;
+//         return result;
 
 
-    },{})
-    .map(([name,total])=>({name,total})));
+//     },{})
+//     .map(([name,total])=>({name,total})));
      
-    //calculate tasks
-    const totalTasks = allTasks ?.length;
-    const last10Task=allTasks?.slice(0,10);
+//     //calculate tasks
+//     const totalTasks = allTasks ?.length;
+//     const last10Task=allTasks?.slice(0,10);
+
+// Group tasks by priority
+const groupData = Object.entries(
+    allTasks.reduce((result, task) => {
+        const { priority } = task;
+        result[priority] = (result[priority] || 0) + 1;
+        return result;
+    }, {})
+).map(([name, total]) => ({ name, total }));
+
+// Calculate tasks
+const totalTasks = allTasks ? allTasks.length : 0;
+const last10Task = allTasks ? allTasks.slice(0, 10) : [];
+
 const summary ={
     totalTasks,
     last10Task,
@@ -184,44 +198,42 @@ const summary ={
     }
 }
 
-export const getTasks = async (req,res)=>{
+export const getTasks = async (req, res) => {
     try {
-        const {stage,isTrashed}=req.query;
-
-
-        let query={isTrashed:isTrashed ? true :false};
-
-        if(stage){
-            query.stage=stage;
-        }
-
-        let queryResult=Task.find(query).populate({
-            path:"team",
-            select:"name title email",
-
+      const { stage, isTrashed ,search  } = req.query;
+  
+      let query = { isTrashed: isTrashed ? true : false };
+  
+      if (stage) {
+        query.stage = stage;
+      }
+  
+      let queryResult = Task.find(query)
+        .populate({
+          path: "team",
+          select: "name title email",
         })
-        .sort({_id:-1});
-
-
-        const tasks=await queryResult;
-
-        res.status(200).json({
-            status:true,
-            tasks,
-        
-        })
-            
-
-        } catch (error) {
-        return res.status(400).json({status:false,message:error.message});
-
+        .sort({ _id: -1 });
+  
+      const tasks = await queryResult;
+  
+      res.status(200).json({
+        status: true,
+        tasks,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ status: false, message: error.message });
     }
-}
+  };
 
 export const getTask  = async (req,res)=>{
+    
     try {
        const {id} =req.params;
-       const task =await Task.findById(id).populate({
+       console.log(id);
+       const task =await Task.findById(id)
+       .populate({
         path:"team",
         select:"name title role email",
        }).populate({
@@ -229,13 +241,12 @@ export const getTask  = async (req,res)=>{
        }).sort({_id:-1});
 
        res.status(200).json({
-        status:true,
-        tasks,
+        task,
     
     })
 
     } catch (error) {
-        return res.status(400),json({status:false,message:error.message});
+        return res.status(400).json({status:true,message:error.message});
 
     }
 }
@@ -255,7 +266,7 @@ export const createSubTask = async (req,res)=>{
         await task.save();
         res.status(200).json({
             status:true,
-            task,
+            message:"Subtask added successfully.",
         
         })
         

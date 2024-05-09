@@ -9,13 +9,13 @@ import {
     YAxis,
     XAxis
 } from "recharts"
-import { chartData } from '../assets/data'
-const Chart = () => {
+//import { chartData } from '../assets/data'
+const Chart = ({data}) => {
   return (
     <ResponsiveContainer
     width={"100%"} height={500} 
     >
-        <BarChart width={100} height={40} data={chartData}>
+        <BarChart width={100} height={40} data={data}>
             <YAxis dataKey={"total"}/>
             <XAxis dataKey={"name"}/>
             <Tooltip/>

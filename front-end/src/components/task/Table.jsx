@@ -14,6 +14,8 @@ import { FaList } from "react-icons/fa";
 import UserInfo from "../UserInfo";
 import Button from "../Button";
 import ConfirmationDialog from "../Dialog";
+import { useTrashtaskMutation } from "../../redux/slices/api/taskApiSlice";
+import AddTask from "./AddTask";
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
@@ -23,15 +25,35 @@ const ICONS = {
 
 const Table = ({ tasks }) => {
   const [openDialog, setOpenDialog] = useState(false);
+  const [openEdit,setOpenEdit]=useState(false);
   const [selected, setSelected] = useState(null);
-
+  const[trashTask]=useTrashtaskMutation();
   const deleteClicks = (id) => {
     setSelected(id);
     setOpenDialog(true);
 
   }
+  const editTaskHandler = (el)=>{
+    setSelected(el);
+    setOpenEdit(true);
+      }
 
-  const deleteHandler = () => {}
+const deleteHandler = async () =>{
+  try {
+  const result = await trashTask({
+  id: selected,
+  isTrash: "trash",
+  }).unwrap();
+  toast.success (result?.message);
+  setTimeout(() => {
+  setOpenDialog(false);
+  window.location.reload();
+  }, 500);
+  } catch (err) {
+  console.log(err);
+  toast.error(err?.data?.message || err.error);
+  }
+  };
 
   const TableHeader = () => (
     <thead className="w-full border-b border-gray-300">
@@ -113,6 +135,7 @@ const Table = ({ tasks }) => {
           className='text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base'
           label="Edit"
           type="button"
+          onClick={()=>editTaskHandler(task)}
         />
          <Button
           className='text-red-700 hover:text-red-500 sm:px-0 text-sm md:text-base'
@@ -144,6 +167,13 @@ const Table = ({ tasks }) => {
        setOpen = {setOpenDialog}
        onClick = {deleteHandler}
        />
+
+<AddTask
+        open={openEdit}
+        setOpen={setOpenEdit}
+        task={tasks}
+        key={new Date().getTime()}
+      />
     </>
   );
 };
