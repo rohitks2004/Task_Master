@@ -19,6 +19,7 @@ import Tabs from "../components/Tabs";
 import { PRIORITYSTYLES, TASK_TYPE, getInitials } from "../utils/index";
 import Loading from "../components/Loader";
 import Button from "../components/Button";
+import { useGetSingleTaskQuery, usePostTaskActivityMutation } from "../redux/slices/api/taskApiSlice";
 
 const assets = [
   "https://images.pexels.com/photos/2418664/pexels-photo-2418664.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -88,10 +89,20 @@ const act_types = [
 
 const TaskDetails = () => {
   const { id } = useParams();
-
+  console.log(id);
+const {data,isLoading}=useGetSingleTaskQuery(id);
+console.log(data);
   const [selected, setSelected] = useState(0);
-  const task = tasks[3];
-
+  const task = data?.task;
+  console.log(task);
+if(isLoading)
+  {
+    return(
+      <div className="py-10">
+        <Loading/>
+      </div>
+    )
+  }
   return (
     <div className='w-full flex flex-col gap-3 mb-4 overflow-y-hidden'>
       <h1 className='text-2xl text-gray-600 font-bold'>{task?.title}</h1>
@@ -231,9 +242,29 @@ const TaskDetails = () => {
 const Activities = ({ activity, id }) => {
   const [selected, setSelected] = useState(act_types[0]);
   const [text, setText] = useState("");
-  const isLoading = false;
+  const[postActivity,{isLoading}]=  usePostTaskActivityMutation();
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    try {
+      const activityData={
+        type:selected?.toLocaleLowerCase(),
+    
+        activity:text,
+      };
+      const result = await postActivity({
+        data:activityData,id,
+      }).unwrap();
+    
+      setText("");
+        toast.success(result?.message)
+      refetch();
+    
+    } catch (err) {
+      console.log(err);
+      toast.error(err)
+      
+    }
+  };
 
   const Card = ({ item }) => {
     return (

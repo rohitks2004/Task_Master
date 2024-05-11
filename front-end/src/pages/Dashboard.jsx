@@ -15,6 +15,8 @@ import Chart from "../components/Chart.jsx";
 import { BGS, PRIORITYSTYLES, TASK_TYPE, getInitials } from "../utils/index.js";
 import UserInfo from "../components/UserInfo";
 
+import Loading from '../components/Loader.jsx'
+import { useGetDasboardStatsQuery } from "../redux/slices/api/taskApiSlice.js";
 
 const TaskTable = ({tasks}) =>{
   const ICONS ={
@@ -151,13 +153,22 @@ const UserTable = ({users}) =>{
 
 
 const Dashboard = () => {
-
-    const totals = summary.tasks;
+    
+  const {data,isLoading}=useGetDasboardStatsQuery();
+  if(isLoading)
+    {
+      return(
+        <div className="py-10">
+        <Loading/>
+        </div>
+      )
+    }
+    const totals = data?.tasks;
     const stats = [
         {
           _id: "1",
           label: "TOTAL TASK",
-          total: summary?.totalTasks || 0,
+          total: data?.totalTasks || 0,
           icon: <FaNewspaper />,
           bg: "bg-[#1d4ed8]",
         },
@@ -219,13 +230,13 @@ const Dashboard = () => {
         <h4 className="text-gray-600 text-xl font-semibold">
           Chart by Priority
         </h4>
-        <Chart/>
+        <Chart data={data?.graphData} />
       </div>
       <div className="w-full flex flex-col md:flex-row gap-4 2xl:gap-10 py-8">
         {/* left */}
-          <TaskTable tasks={summary.last10Task}/>
+          <TaskTable tasks={data?.last10Task}/>
         {/* right */}
-        <UserTable users={summary.users} />
+        <UserTable users={data?.users} />
       </div>
     </div>
   )

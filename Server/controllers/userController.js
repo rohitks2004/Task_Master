@@ -55,6 +55,7 @@ export const    registerUser = async (req, res) => {
             isAdmin,
             role,
             title,
+            isActive:true
         })
 
         if (user) {
@@ -96,7 +97,7 @@ export const loginUser = async (req,res)=>{
 
             user.password =undefined;
 
-            res.status(200).json({user})
+            res.status(200).json(user)
         }
         else{
             return res.status(401).json({status:false , message:"Invalid email or password"});
@@ -137,7 +138,7 @@ export const getNotificationsList = async (req,res)=>{
     try {
         const { userId } = req.user;
     
-        const notice = await Notice.findOne({
+        const notice = await Notice.find({
             team: userId,
             isRead: { $nin: [userId] },
         }).populate("task", "title");
@@ -169,7 +170,7 @@ export const updateUserProfile = async (req,res)=>{
             
             user.role= req.body.role || user. role;
          
-            const updateUser = await User.Save()
+            const updateUser = await user.save()
                 user.password=undefined;
                 res.status(201).json({
                     status:true,
@@ -182,7 +183,7 @@ export const updateUserProfile = async (req,res)=>{
             res.status(400).json({status:false,message:"User not found"});
         }
     } catch (error) {
-        return res.status(400),json({status:false,message:error.message});
+        return res.status(400).json({status:false,message:error.message});
 
     }
 }
@@ -257,7 +258,7 @@ export const activateUserProfile = async (req,res)=>{
             res.status(201).json({
                 status:true,
                 message:`User account has been ${
-                    ser?.isActive ? "activated":"disabled"}`
+                    user?.isActive ? "activated":"disabled"}`
     
             })
     
@@ -267,7 +268,7 @@ export const activateUserProfile = async (req,res)=>{
         }
         
     } catch (error) {
-        return res.status(400),json({status:false,message:error.message});
+        return res.status(400).json({status:false,message:error.message});
 
     }
 }

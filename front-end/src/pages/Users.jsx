@@ -7,15 +7,56 @@ import { getInitials } from "../utils";
 import clsx from "clsx";
 import ConfirmationDialog, { UserAction } from "../components/Dialog";
 import AddUser from "../components/AddUser";
+import {useUpdateUserMutation, useGetTeamListQuery, useDeleteUserMutation, useUserActionMutation } from "../redux/slices/api/userApiSlice";
+import { toast } from "sonner";
 
 const Users = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
+  const {data,isLoading,refetch}=useGetTeamListQuery();
+  const[deleteUser]=useDeleteUserMutation();
+  const[userAction]=useUserActionMutation();
 
-  const userActionHandler = () => {};
-  const deleteHandler = () => {};
+  const userActionHandler =async () => {
+try {
+  await userAction({
+    isActive:!selected.isActive,
+    id:selected?._id,
+
+  })
+
+refetch()
+toast.success("Updated successfully")
+setSelected(null);
+setTimeout(()=>{
+  setOpenAction(false);
+
+},500)
+
+} catch (error) {
+  console.log(error);
+  toast.error(error?.data?.message || err.error);
+}
+  };
+
+
+  const deleteHandler = async() => {
+    try {
+    await deleteUser(selected)
+
+      refetch();
+      toast.success("Deleted Successfully");
+      setSelected(null);
+      setTimeout(()=>{
+        setOpenDialog(false);
+      
+      },500)
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const deleteClick = (id) => {
     setSelected(id);
@@ -27,6 +68,10 @@ const Users = () => {
     setOpen(true);
   };
 
+  const userStatusClick=(el)=>{
+    setSelected(el);
+    setOpenAction(true);
+  }
   const TableHeader = () => (
     <thead className='border-b border-gray-300'>
       <tr className='text-black text-left'>
@@ -58,7 +103,7 @@ const Users = () => {
 
       <td>
         <button
-          // onClick={() => userStatusClick(user)}
+           onClick={() => userStatusClick(user)}
           className={clsx(
             "w-fit px-4 py-1 rounded-full",
             user?.isActive ? "bg-blue-200" : "bg-yellow-100"
@@ -104,7 +149,7 @@ const Users = () => {
             <table className='w-full mb-5'>
               <TableHeader />
               <tbody>
-                {summary.users?.map((user, index) => (
+                {data?.map((user, index) => (
                   <TableRow key={index} user={user} />
                 ))}
               </tbody>
