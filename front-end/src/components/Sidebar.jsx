@@ -94,12 +94,12 @@ const Sidebar = () => {
           <NavLink element={link} key={link.label} />
         ))}
       </div>
-      <div className="">
+      {/* <div className="">
         <button className="w-full flex gap-2 p-2 items-center text-lg text-gray-800">
           <MdSettings/>
           <span>Settings</span>
-        </button>
-      </div>
+        </button> */}
+      {/* </div> */}
     </div>
   );
 };
