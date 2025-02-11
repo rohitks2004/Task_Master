@@ -9,7 +9,7 @@ const userSchema = new Schema({
     role:{type:String,required:true},
     isAdmin:{type:Boolean,required:true,default:false},
     tasks:[{type:Schema.Types.ObjectId,ref:"Task"}],
-    isActive:{type:Boolean,required:true,default:false}
+    isActive:{type:Boolean,required:true,default:true}
    
 },
 {timestamps:true}
